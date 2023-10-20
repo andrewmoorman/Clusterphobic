@@ -1,2 +1,2 @@
 # Clusterphobic
-Utilities for simplifying interactions with cluster computing resources
+Cluster computing made simple.
