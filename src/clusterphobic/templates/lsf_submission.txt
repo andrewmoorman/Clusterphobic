@@ -1,0 +1,25 @@
+bsub \
+    -J {{ submission.job_parameters.job_name }} \
+    -n {{ submission.job_parameters.n_cores }} \
+    -R "rusage[mem={{ submission.job_parameters.mem_per_core }}]" \
+    {%- if submission.job_parameters.n_cores_per_node %}
+    -R "span[ptile={{ submission.job_parameters.n_cores_per_node }}]" \
+    {%- endif %}
+    {%- if submission.job_parameters.run_time %}
+    -W {{ submission.job_parameters.run_time }} \
+    {%- endif %}
+    {%- if submission.job_parameters.n_gpus %}
+    -gpu "num={{ submission.job_parameters.n_gpus }}" \
+    {%- endif %}
+    {%- if submission.job_parameters.mem_per_gpu %}
+    -gpu "gmem:{{ submission.job_parameters.mem_per_gpu }}" \
+    {%- endif %}
+    {%- if submission.interactive %}
+    -Is bash
+    {%- endif %}
+    {%- if submission.command %}
+    "{{ submission.command }}"
+    {%- endif -%}
+    {%- if submission.script %}
+     {{ submission.script }}
+    {%- endif -%}

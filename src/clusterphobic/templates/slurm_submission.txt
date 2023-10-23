@@ -1,0 +1,29 @@
+{% if submission.interactive -%}
+srun \
+{%- else -%}
+sbatch \
+{%- endif %}
+    --job-name {{ submission.job_parameters.job_name }} \
+    --ntasks {{ submission.job_parameters.n_cores }} \
+    --mem-per-cpu {{ submission.job_parameters.mem_per_core }} \
+    {%- if submission.job_parameters.n_cores_per_node %}
+    --ntasks-per-node {{ submission.job_parameters.n_cores_per_node }} \
+    {%- endif %}
+    {%- if submission.job_parameters.run_time %}
+    --time {{ submission.job_parameters.run_time }} \
+    {%- endif %}
+    {%- if submission.job_parameters.n_gpus %}
+    --gres=gpu:{{ submission.job_parameters.n_gpus }} \
+    {%- endif %}
+    {%- if submission.job_parameters.mem_per_gpu %}
+    --mem-per-gpu {{ submission.job_parameters.mem_per_gpu }} \
+    {%- endif %}
+    {%- if submission.interactive %}
+    --pty bash {% else %}
+    {%- endif %}
+    {%- if submission.command %}
+    --wrap '{{ submission.command }}'
+    {%- endif -%}
+    {%- if submission.script %}
+    < {{ submission.script }}
+    {%- endif -%}
